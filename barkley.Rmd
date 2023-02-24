@@ -1,0 +1,67 @@
+---
+title: "Barkley Tracker"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(data.table)
+library(lubridate)
+library(ggplot2)
+library(rtweet)
+library(flextable)
+library(magrittr)
+library(kableExtra)
+
+token <- create_token( ## deprecated, need to update
+ app = "barkley_plots",
+ consumer_key = "10yNs8ODhN3hrOwRj9lrvddKm",
+ consumer_secret = "8nD3dGsglD0UFXWN51hcunvBlOq7ZNabnJeXPLMdQfPgw1YkUo",
+ access_token = "59933095-H6VGvnLCiOSaOY2UAE6MvOXl1uqkgm2idJsXJwmff",
+ access_secret = "iJUEWBEHCjq2RZUx45mQOBbkE5HEx8NY06Dr3I5oOxASd")
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Tracker
+
+```{r}
+
+```
+
+Column {data-width=350} 
+-----------------------------------------------------------------------
+
+### Finish Probabilities {.no-mobile}
+
+```{r}
+
+```
+
+### Recent Keith Tweets {.no-mobile}
+
+```{r}
+
+# harvest Keith's tweets
+kt <- get_timeline("keithdunn", n=100)
+kt <- as.data.table(kt)
+kt <- kt[created_at>="2023-01-20", .(Timestamp=created_at, Text=text)]
+
+## no retweets
+kt <- kt[substr(Text,1,2)!="RT"]
+## no retweets
+kt <- kt[substr(Text,1,1)!="@"]
+## just top ten
+head(kt, 10) %>%
+  kable(format="html") %>% 
+  kable_styling(bootstrap_options="striped")
+## https://apreshill.github.io/data-vis-labs-2018/05-tables.html
+#scroll_box(kable(head(kt,10))) #) flextable(head(kt,10)) %>% theme_zebra()
+
+
+```
